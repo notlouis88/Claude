@@ -47,11 +47,35 @@ IA autoalojado que junta los planes gratuitos de muchos proveedores de LLM detr�
 endpoint compatible con OpenAI, con fallback automático entre proveedores. Está pensado para
 correr fijo en la máquina del usuario, no en este contenedor efímero.
 
-- Instalación recomendada: `npm install -g omniroute` y luego `omniroute`, o Docker
-  (ver la sección "Quick Start" de `OmniRoute/README.md`).
+- Instalación: `npm install -g omniroute` y `omniroute serve --daemon --no-open --no-tray`,
+  o Docker (ver la sección "Quick Start" de `OmniRoute/README.md`).
+- Sus skills (`omni-*`, `cli-*`, `ponytail`, `config-codex-cli`) están copiadas en
+  `.claude/skills/`.
 - Dashboard y API en http://localhost:20128. Los proveedores se conectan desde el dashboard
   con las cuentas o claves del usuario; la clave de OmniRoute sale de Dashboard → Endpoints y
   se usa contra `http://localhost:20128/v1` con `"model": "auto"`.
 - Para inicializar el submódulo en una sesión nueva:
   `git submodule update --init --depth 1 OmniRoute`
 - Nunca pidas ni escribas claves de proveedores en el chat ni en archivos versionados.
+
+## claude-mem
+
+Plugin de memoria persistente (https://github.com/thedotmack/claude-mem). Está declarado en
+`.claude/settings.json` (marketplace `thedotmack`, plugin `claude-mem`). Usa el plan de
+Anthropic como observador, sin cuenta en cmem.ai y sin sync en la nube. La memoria vive en
+`~/.claude-mem`, así que en el contenedor efímero se reinicia en cada sesión.
+
+## Headroom
+
+Capa de compresión de contexto (https://github.com/headroomlabs-ai/headroom). La skill
+`headroom` está en `.claude/skills/headroom/`. La CLI se instala con
+`uv tool install --python 3.13 "headroom-ai[all]"`; `headroom wrap claude` lanza una nueva
+sesión de Claude Code a través de su proxy.
+
+## Puesta en marcha de las herramientas en una sesión nueva
+
+```bash
+npm install -g omniroute && omniroute serve --daemon --no-open --no-tray
+CLAUDE_MEM_ONLINE_OPTIN=false CI=1 npx -y claude-mem install --ide claude-code --provider claude && npx -y claude-mem start
+uv tool install --python 3.13 "headroom-ai[all]"
+```
