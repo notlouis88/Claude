@@ -39,3 +39,18 @@ El contenedor es efímero. Si `OpenMontage/.venv` no existe:
 git submodule update --init --depth 1 OpenMontage
 cd OpenMontage && make setup
 ```
+
+## FreeLLMAPI
+
+`freellmapi/` es un submódulo (https://github.com/tashfeenahmed/freellmapi): un router
+autoalojado que junta los planes gratuitos de muchos proveedores de LLM detrás de una sola
+API compatible con OpenAI (`/v1`). Está pensado para correr fijo en la máquina del usuario,
+no en este contenedor efímero.
+
+- Instalación recomendada: app de escritorio (Releases del repo) o Docker
+  (`docker compose up -d` dentro de `freellmapi/`, ver `freellmapi/docs/en/install/01-install.md`).
+- Dashboard en http://localhost:3001: las claves de cada proveedor se agregan en la página
+  **Keys**, y de ahí sale la clave unificada para los clientes OpenAI.
+- Para inicializar el submódulo en una sesión nueva:
+  `git submodule update --init --depth 1 freellmapi`
+- Nunca pidas ni escribas claves de proveedores en el chat ni en archivos versionados.
